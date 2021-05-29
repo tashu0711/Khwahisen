@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "297589684063",
+    "project_id": "khwahisen",
+    "storage_bucket": "khwahisen.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:297589684063:android:b418d041c6581e2b0a28ea",
+        "android_client_info": {
+          "package_name": "khwahisen.example.khwahisein"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "297589684063-puq76f4q3mo4btulkrgh0p9r44resce7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCnvFHKfoiOfxqV2J0lvnbnyEUkhrhfcA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "297589684063-puq76f4q3mo4btulkrgh0p9r44resce7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
