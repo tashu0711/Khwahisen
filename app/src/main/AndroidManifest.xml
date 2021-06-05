@@ -11,7 +11,11 @@
         android:roundIcon="@drawable/khwahisen"
         android:supportsRtl="true"
         android:theme="@style/Theme.Khwahisen">
-        <activity android:name=".MainHomeActivity"></activity>
+        <activity android:name=".NeedyRegisterActivity"></activity>
+        <activity android:name=".LogInActivity" />
+        <activity
+            android:name=".MainHomeActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".IntroActivity">
             <intent-filter>

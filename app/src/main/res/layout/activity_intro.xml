@@ -17,12 +17,12 @@
         android:elevation="3dp"
         android:clickable="true"
         android:textColor="@color/black"
-        app:layout_constraintBottom_toTopOf="@+id/button2"
-        app:layout_constraintEnd_toEndOf="@+id/button2"
-        app:layout_constraintStart_toStartOf="@+id/button2" />
+        app:layout_constraintBottom_toTopOf="@+id/introacctivitybtn_help"
+        app:layout_constraintEnd_toEndOf="@+id/introacctivitybtn_help"
+        app:layout_constraintStart_toStartOf="@+id/introacctivitybtn_help" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/introacctivitybtn_help"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

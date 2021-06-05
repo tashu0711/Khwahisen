@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -32,9 +33,8 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText edPassword;
     private Button btnCreateUser;
     private SharedPreferences credentials;
-
+    private TextView login_btn;
     private EditText email;
-    private FirebaseDatabase database;
     private FirebaseFirestore firebaseFirestore;
 
     ProgressDialog RgDialog;
@@ -48,20 +48,33 @@ public class SignUpActivity extends AppCompatActivity {
         edPassword = findViewById(R.id.signup_password);
         email = findViewById(R.id.sign_up_email);
         btnCreateUser = findViewById(R.id.sign_up_button);
-         database = FirebaseDatabase.getInstance();
+        login_btn =findViewById(R.id.sign_up_loginbtn);
          RgDialog = new ProgressDialog(this);
          RgDialog.setTitle("Please wait!");
          firebaseFirestore = FirebaseFirestore.getInstance();
         credentials = getSharedPreferences(CREDENTIAL_SHARED_PREF, MODE_PRIVATE);
+
+        ///////////////////////////////////////////////////////////////////////////////////
         btnCreateUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                RgDialog.show();
-                RegisterWithEmail();
+                RgDialog.show(); //// to show progress dialog
+                RegisterWithEmail();  //////calling method for registor
             }
 
         });
+
+        ///////////////////////////////////////////////////////////////////////////////
+        login_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SignUpActivity.this, LogInActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        ////////////////////////////////////////////////////////////////////////////////
     }
 
     private void RegisterWithEmail() {
@@ -76,15 +89,29 @@ public class SignUpActivity extends AppCompatActivity {
                                     Map<Object, String> userdata = new HashMap<>();
                                     userdata.put("User Name", edUsername.getText().toString());
 
+
                                     firebaseFirestore.collection("USERS").document(mAuth.getUid()).set(userdata).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull  Task<Void> task) {
-                                            sharedPref();
-                                            SIGNUPGO();
-                                            RgDialog.dismiss();
+                                            String strPassword = edPassword.getText().toString();
+
+                                            String strUsername = edUsername.getText().toString();
+
+                                            SharedPreferences.Editor editor = credentials.edit();
+                                            editor.putString("Password", strPassword);
+                                            editor.putString("name",strUsername);
+                                            editor.commit();
+                                            SignUpActivity.this.finish();
+
                                             currentUID = mAuth.getUid();
-                                            finish();
                                             Toast.makeText(SignUpActivity.this,"Successful...",Toast.LENGTH_LONG).show();
+
+                                            Intent intent = new Intent(SignUpActivity.this, MainHomeActivity.class);
+                                            startActivity(intent);
+
+                                            finish();
+
+                                            RgDialog.dismiss();
 
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {
@@ -132,29 +159,13 @@ public class SignUpActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-//    public void moveToLogin(View view) {
-//        Intent intent = new Intent(SignUpActivity.this, LogInactivity.class);
-//        startActivity(intent);
-//    }
 
 
-
-    private void sharedPref() {
-        String strPassword = edPassword.getText().toString();
-
-        String strUsername = edUsername.getText().toString();
-
-        SharedPreferences.Editor editor = credentials.edit();
-        editor.putString("Password", strPassword);
-        editor.putString("name",strUsername);
-        editor.commit();
-        SignUpActivity.this.finish();
-    }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if (credentials.contains("Password") && credentials.contains("name"))
+        if (credentials.contains("Password") ||  credentials.contains("name"))
         {
             SIGNUPGO();
         }

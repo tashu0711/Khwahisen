@@ -20,17 +20,27 @@ public class IntroActivity extends AppCompatActivity {
     private List<SlideModel> slideModelList = new ArrayList<>();
 
     private Button btnDonate;
+    private Button btnHelp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
 
         btnDonate = findViewById(R.id.btn_donate);
+        btnHelp=findViewById(R.id.introacctivitybtn_help);
 
         btnDonate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(IntroActivity.this, SignUpActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+        btnHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(IntroActivity.this,NeedyRegisterActivity.class);
                 startActivity(intent);
                 finish();
             }
