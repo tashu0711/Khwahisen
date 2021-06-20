@@ -75,59 +75,64 @@ public class MainHomeActivity extends AppCompatActivity {
 
 
     void payUsingUpi() {
-
-        Uri uri = new Uri.Builder().scheme("upi")
-                .authority("pay")
-                .appendQueryParameter("pa", "8081532834@okbizaxis")
-                .appendQueryParameter("pn", "Sumit Sharma")
-                .appendQueryParameter("mc", "BCR2DN6T562YZ63B")
-                .appendQueryParameter("tn", "khwahisen")
-                .appendQueryParameter("am", String.valueOf(1))
-                .appendQueryParameter("tid", "")
-                .appendQueryParameter("tr", "")
-                .appendQueryParameter("cu", "INR")
-                .build();
-
-
+        Uri uri =
+                new Uri.Builder()
+                        .scheme("upi")
+                        .authority("pay")
+                        .appendQueryParameter("pa", "6393508356@paytm")       // virtual ID
+                        .appendQueryParameter("pn", "Ashu Tiwari")          // name
+                        .appendQueryParameter("tn", "khwahisein")       // any note about payment
+                        .appendQueryParameter("am", "11")           // amount
+                        .appendQueryParameter("cu", "INR")                         // currency
+                        .build();
 
 
 
         Intent upiPayIntent = new Intent(Intent.ACTION_VIEW);
         upiPayIntent.setData(uri);
 
-        // will always show a dialog to user to choose an app
+// will always show a dialog to user to choose an app
         Intent chooser = Intent.createChooser(upiPayIntent, "Pay with");
 
-        // check if intent resolves
-        if (null != chooser.resolveActivity(getPackageManager())) {
+
+// check if intent resolves
+        if(null != chooser.resolveActivity(getPackageManager())) {
             startActivityForResult(chooser, UPI_PAYMENT);
         } else {
-            Toast.makeText(MainHomeActivity.this, "No UPI app found, please install one to continue", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainHomeActivity.this,"No UPI app found, please install one to continue",Toast.LENGTH_SHORT).show();
         }
-
     }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        Log.e("main ", "response "+resultCode );
+        /*
+       E/main: response -1
+       E/UPI: onActivityResult: txnId=AXI4a3428ee58654a938811812c72c0df45&responseCode=00&Status=SUCCESS&txnRef=922118921612
+       E/UPIPAY: upiPaymentDataOperation: txnId=AXI4a3428ee58654a938811812c72c0df45&responseCode=00&Status=SUCCESS&txnRef=922118921612
+       E/UPI: payment successfull: 922118921612
+         */
         switch (requestCode) {
             case UPI_PAYMENT:
                 if ((RESULT_OK == resultCode) || (resultCode == 11)) {
                     if (data != null) {
                         String trxt = data.getStringExtra("response");
-                        Log.d("UPI", "onActivityResult: " + trxt);
+                        Log.e("UPI", "onActivityResult: " + trxt);
                         ArrayList<String> dataList = new ArrayList<>();
                         dataList.add(trxt);
                         upiPaymentDataOperation(dataList);
                     } else {
-                        Log.d("UPI", "onActivityResult: " + "Return data is null");
+                        Log.e("UPI", "onActivityResult: " + "Return data is null");
                         ArrayList<String> dataList = new ArrayList<>();
                         dataList.add("nothing");
                         upiPaymentDataOperation(dataList);
                     }
                 } else {
-                    Log.d("UPI", "onActivityResult: " + "Return data is null"); //when user simply back without payment
+                    //when user simply back without payment
+                    Log.e("UPI", "onActivityResult: " + "Return data is null");
                     ArrayList<String> dataList = new ArrayList<>();
                     dataList.add("nothing");
                     upiPaymentDataOperation(dataList);
@@ -139,35 +144,41 @@ public class MainHomeActivity extends AppCompatActivity {
     private void upiPaymentDataOperation(ArrayList<String> data) {
         if (isConnectionAvailable(MainHomeActivity.this)) {
             String str = data.get(0);
-            Log.d("UPIPAY", "upiPaymentDataOperation: " + str);
+            Log.e("UPIPAY", "upiPaymentDataOperation: "+str);
             String paymentCancel = "";
-            if (str == null) str = "discard";
+            if(str == null) str = "discard";
             String status = "";
             String approvalRefNo = "";
             String response[] = str.split("&");
             for (int i = 0; i < response.length; i++) {
                 String equalStr[] = response[i].split("=");
-                if (equalStr.length >= 2) {
+                if(equalStr.length >= 2) {
                     if (equalStr[0].toLowerCase().equals("Status".toLowerCase())) {
                         status = equalStr[1].toLowerCase();
-                    } else if (equalStr[0].toLowerCase().equals("ApprovalRefNo".toLowerCase()) || equalStr[0].toLowerCase().equals("txnRef".toLowerCase())) {
+                    }
+                    else if (equalStr[0].toLowerCase().equals("ApprovalRefNo".toLowerCase()) || equalStr[0].toLowerCase().equals("txnRef".toLowerCase())) {
                         approvalRefNo = equalStr[1];
                     }
-                } else {
+                }
+                else {
                     paymentCancel = "Payment cancelled by user.";
                 }
             }
-
             if (status.equals("success")) {
                 //Code to handle successful transaction here.
                 Toast.makeText(MainHomeActivity.this, "Transaction successful.", Toast.LENGTH_SHORT).show();
-                Log.d("UPI", "responseStr: " + approvalRefNo);
-            } else if ("Payment cancelled by user.".equals(paymentCancel)) {
+                Log.e("UPI", "payment successfull: "+approvalRefNo);
+            }
+            else if("Payment cancelled by user.".equals(paymentCancel)) {
                 Toast.makeText(MainHomeActivity.this, "Payment cancelled by user.", Toast.LENGTH_SHORT).show();
-            } else {
+                Log.e("UPI", "Cancelled by user: "+approvalRefNo);
+            }
+            else {
                 Toast.makeText(MainHomeActivity.this, "Transaction failed.Please try again", Toast.LENGTH_SHORT).show();
+                Log.e("UPI", "failed payment: "+approvalRefNo);
             }
         } else {
+            Log.e("UPI", "Internet issue: ");
             Toast.makeText(MainHomeActivity.this, "Internet connection is not available. Please check and try again", Toast.LENGTH_SHORT).show();
         }
     }
